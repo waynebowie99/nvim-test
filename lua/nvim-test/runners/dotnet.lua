@@ -8,7 +8,10 @@ local cstest = Runner:init({
 }, {
   c_sharp = [[
     ; Namespace
-    ((namespace_declaration name: (identifier) @test-name) @scope-root)
+    ((namespace_declaration name: (qualified_name) @test-name) @scope-root)
+
+    ; File Scoped Namespace
+    ((file_scoped_namespace_declaration name: (qualified_name) @test-name) @scope-root)
 
     ; Class
     ((class_declaration name: (identifier) @test-name) @scope-root)
@@ -29,6 +32,12 @@ local cstest = Runner:init({
 function cstest:build_test_args(args, tests)
   table.insert(args, "--filter")
   table.insert(args, "FullyQualifiedName=" .. table.concat(tests, "."))
+end
+
+function cstest:build_args(args, _, opts)
+  if opts.tests and #opts.tests > 0 then
+      self:build_test_args(args, opts.tests)
+  end
 end
 
 return cstest
