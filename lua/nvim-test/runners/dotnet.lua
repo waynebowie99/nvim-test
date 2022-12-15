@@ -31,7 +31,7 @@ local cstest = Runner:init({
 
 function cstest:build_test_args(args, tests)
   table.insert(args, "--filter")
-  table.insert(args, "FullyQualifiedName=" .. table.concat(tests, "."))
+  table.insert(args, "FullyQualifiedName~" .. table.concat(tests, "."))
 end
 
 function cstest:build_args(args, _, opts)
