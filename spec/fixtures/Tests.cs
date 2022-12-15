@@ -1,4 +1,4 @@
-namespace Namespace
+namespace Namespace.Fixtures
 {
     public class Tests
     {
