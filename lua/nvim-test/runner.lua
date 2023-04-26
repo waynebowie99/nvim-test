@@ -1,7 +1,7 @@
 ---@diagnostic disable: unused-local
 local utils = require "nvim-test.utils"
 local ts_utils = require "nvim-treesitter.ts_utils"
-local ts_parsers = require("nvim-treesitter.parsers")
+local ts_parsers = require "nvim-treesitter.parsers"
 local ts = vim.treesitter
 
 ---@class Runner
@@ -95,6 +95,13 @@ function Runner:parse_testname(name)
   return name
 end
 
+-- Find root directory
+---@param filename string
+---@return string
+function Runner:find_working_directory(filename)
+  return self.config.working_directory
+end
+
 -- Build command list
 ---
 ---@return table cmd command list
@@ -106,8 +113,6 @@ function Runner:build_cmd(filename, opts)
 end
 
 -- Build arguments
----
----@return table args arguments list
 function Runner:build_args(args, filename, opts)
   if filename then
     table.insert(args, filename)

@@ -31,17 +31,22 @@ function M.run(scope)
 
     -- Find file
     if scope ~= "suite" then
-      filename = vim.fn.expand(
-        "%" .. (runner.config.filename_modifier or M.config.filename_modifier)
-      )
+      filename =
+        vim.fn.expand("%" .. (runner.config.filename_modifier or M.config.filename_modifier))
       if not runner:is_testfile(filename) then
         filename = runner:find_file(filename)
       end
     end
 
+    -- Find the current working directory
+    local cwd = runner:find_working_directory(filename)
+    if filename and cwd and #cwd > 0 then
+      filename = string.gsub(filename, "^" .. cwd .. "/", "", 1)
+    end
+
     -- Prepare run context
     local cmd = runner:build_cmd(filename, opts)
-    local cfg = { env = runner.config.env, working_directory = runner.config.working_directory }
+    local cfg = { env = runner.config.env, working_directory = cwd }
 
     -- Save last run
     vim.g.test_latest = {
@@ -93,9 +98,8 @@ end
 
 function M.edit()
   local runner = M.get_runner(vim.bo.filetype)
-  local filename = vim.fn.expand(
-    "%" .. (runner.config.filename_modifier or M.config.filename_modifier)
-  )
+  local filename =
+    vim.fn.expand("%" .. (runner.config.filename_modifier or M.config.filename_modifier))
   if not runner:is_testfile(filename) then
     vim.api.nvim_command("edit " .. runner:find_file(filename, true))
   end

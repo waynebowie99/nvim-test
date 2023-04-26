@@ -64,6 +64,10 @@ function M.find_file_by_patterns(source, patterns, force)
     if #testfile > 0 then
       return testfile
     end
+    testfile = vim.fn.finddir(filename, source .. ";")
+    if #testfile > 0 then
+      return testfile
+    end
   end
   if force then
     return vim.fn.fnamemodify(source, ":h") .. "/" .. M.format_pattern(patterns[1], ctx)
@@ -80,6 +84,18 @@ function M.format_pattern(pattern, ctx)
     res = res:gsub("{" .. var .. "}", ctx[var] or "")
   end
   return res
+end
+
+---Find the project root based on an indicating filename
+---@param source string
+---@param indicator string
+---@return string
+function M.find_relative_root(source, indicator)
+  local path = vim.fn.findfile(indicator, vim.fn.fnamemodify(source, ":p") .. ";")
+  if path and #path > 0 then
+    path = vim.fn.fnamemodify(path, ":p:h")
+  end
+  return path
 end
 
 return M
